@@ -38,7 +38,7 @@ export default function Home() {
             
             <div className="md:w-1/2 flex justify-center lg:justify-end animate-fade-in-up mt-8 md:mt-0">
               <Image 
-                src="/hero-image.png" 
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/hero-image.png`} 
                 alt="Online Tutoring Virtual Classroom" 
                 width={800} 
                 height={600} 
