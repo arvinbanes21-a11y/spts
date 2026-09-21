@@ -124,6 +124,38 @@ export default function LoginPage() {
                         <p className="text-center text-xs text-gray-400">
                             Admins sign in here with admin credentials.
                         </p>
+
+                        <div className="mt-6 border-t border-gray-200 pt-6">
+                            <p className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                                🚀 Live Demo Quick Access
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const demoUser = { id: 999, first_name: 'Jordan', last_name: 'Cruz', email: 'jordan.student@demo.com', role: 'student' };
+                                        localStorage.setItem('token', 'demo-token');
+                                        localStorage.setItem('user', JSON.stringify(demoUser));
+                                        router.push('/dashboard');
+                                    }}
+                                    className="w-full flex justify-center items-center py-2 px-3 border border-blue-600 rounded-md shadow-sm text-xs font-medium text-blue-600 bg-white hover:bg-blue-50 transition-colors"
+                                >
+                                    🎓 Demo Student
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const demoUser = { id: 101, first_name: 'Prof. Alex', last_name: 'Johnson', email: 'alex.tutor@demo.com', role: 'tutor', isValidated: true };
+                                        localStorage.setItem('token', 'demo-token');
+                                        localStorage.setItem('user', JSON.stringify(demoUser));
+                                        router.push('/dashboard');
+                                    }}
+                                    className="w-full flex justify-center items-center py-2 px-3 border border-indigo-600 rounded-md shadow-sm text-xs font-medium text-indigo-600 bg-white hover:bg-indigo-50 transition-colors"
+                                >
+                                    👨‍🏫 Demo Tutor
+                                </button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>

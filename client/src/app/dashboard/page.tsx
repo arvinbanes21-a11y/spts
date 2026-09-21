@@ -13,6 +13,8 @@ import PendingRequestsWidget from '../../components/PendingRequestsWidget';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { API_BASE_URL } from '@/config';
+import { getDemoSessions } from '../../data/mockSessions';
+import { mockTutors } from '../../data/mockTutors';
 
 export default function DashboardPage() {
     const [user, setUser] = useState<any>(null);
@@ -65,25 +67,39 @@ export default function DashboardPage() {
 
         // Fetch sessions
         fetch(`${API_BASE_URL}/api/sessions?userId=${parsedUser.id}&role=${parsedUser.role}`)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('API unavailable');
+                return res.json();
+            })
             .then(data => {
-                setSessions(data);
+                if (Array.isArray(data) && data.length > 0) {
+                    setSessions(data);
+                } else {
+                    setSessions(getDemoSessions(parsedUser.role));
+                }
                 setLoading(false);
             })
             .catch(err => {
-                console.error('Failed to fetch sessions', err);
+                console.warn('Backend offline, loading demo sessions:', err);
+                setSessions(getDemoSessions(parsedUser.role));
                 setLoading(false);
             });
 
         // Fetch favorites
         if (parsedUser.role === 'student') {
             fetch(`${API_BASE_URL}/api/tutors/favorites/${parsedUser.id}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error('API unavailable');
+                    return res.json();
+                })
                 .then(data => {
                     setFavoriteTutors(data);
                     setFavoriteIds(new Set(data.map((t: any) => t.id)));
                 })
-                .catch(err => console.error('Failed to fetch favorites', err));
+                .catch(() => {
+                    setFavoriteTutors(mockTutors.slice(0, 2));
+                    setFavoriteIds(new Set([1, 2]));
+                });
         }
     }, [router]);
 
@@ -91,7 +107,10 @@ export default function DashboardPage() {
         if (activeTab === 'profile' && user) {
             setProfileLoading(true);
             fetch(`${API_BASE_URL}/api/tutors/${user.id}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error('API unavailable');
+                    return res.json();
+                })
                 .then(data => {
                     setProfileData({
                         bio: data.bio || '',
@@ -106,8 +125,19 @@ export default function DashboardPage() {
                     });
                     setProfileLoading(false);
                 })
-                .catch(err => {
-                    console.error(err);
+                .catch(() => {
+                    // Demo profile fallback
+                    setProfileData({
+                        bio: 'Dedicated peer tutor passionate about helping students excel in Calculus, Physics, and Data Structures.',
+                        hourlyRate: 35,
+                        subjects: ['Mathematics', 'Calculus', 'Computer Science'],
+                        graduatedProgram: 'BS Computer Science',
+                        currentGrade: 'Senior / 4th Year',
+                        schoolAttended: 'College of Computer Studies',
+                        gcashNumber: '0917-123-4567',
+                        profilePicture: null,
+                        videoIntroduction: null
+                    });
                     setProfileLoading(false);
                 });
         }

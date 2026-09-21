@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { API_BASE_URL } from '@/config';
 import Link from 'next/link';
 import TutorCard from '../../components/TutorCard';
+import { mockTutors } from '../../data/mockTutors';
 
 function FindTutorContent() {
     const searchParams = useSearchParams();
@@ -20,13 +21,21 @@ function FindTutorContent() {
 
     useEffect(() => {
         fetch(`${API_BASE_URL}/api/tutors`)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('API unavailable');
+                return res.json();
+            })
             .then(data => {
-                setTutors(data);
+                if (Array.isArray(data) && data.length > 0) {
+                    setTutors(data);
+                } else {
+                    setTutors(mockTutors);
+                }
                 setLoading(false);
             })
             .catch(err => {
-                console.error('Failed to fetch tutors', err);
+                console.warn('Backend unavailable, using demo tutors:', err);
+                setTutors(mockTutors);
                 setLoading(false);
             });
             
