@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  spts-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: spts-server
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      # Mount the database directory to preserve SQLite data across restarts
+      - ./server/database:/usr/src/app/database
+      # Mount the uploads directory to preserve locally uploaded files
+      - ./server/uploads:/usr/src/app/uploads
+    env_file:
+      - ./server/.env.example # You should copy this to .env in production
+
+  spts-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        # Supply Next.js API URL at build time so the client knows how to contact the VPS Backend
+        NEXT_PUBLIC_API_URL: http://187.127.111.210:3001
+    container_name: spts-client
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # For Next.js in production, this should ideally point to the public internet address
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    depends_on:
+      - spts-server

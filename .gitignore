@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Next.js build output
+client/.next/
+client/out/
+client/build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+server/.env
+client/.env.local
+!.env.example
+!server/.env.example
+!client/.env.example
+
+# SQLite Database files (generated runtime data)
+database/*.db
+database/*.db-journal
+database/*.db-wal
+database/*.db-shm
+
+# Server uploads (user-submitted documents, receipts, media)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Logs and debug files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
